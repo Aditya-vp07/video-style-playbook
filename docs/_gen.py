@@ -101,7 +101,7 @@ SPEC = """      <div class="row">
 """
 
 SCEN = """      <div class="scen">
-        <img src="../../examples/{slug}/{file}" alt="{label}">
+        <img src="../examples/{slug}/{file}" alt="{label}">
         <div class="cap"><b>{label}</b>{desc}</div>
       </div>
 """
