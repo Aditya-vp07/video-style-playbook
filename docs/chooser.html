@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Style chooser — Video Style Playbook</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="index.html">Video Style <span>Playbook</span></a>
+  <div class="nav-links">
+    <a href="index.html">Styles</a>
+    <a href="chooser.html" class="active">Style chooser</a>
+    <a href="../STYLES.md">Specs</a>
+    <a href="../RECIPES.md">Recipes</a>
+  </div>
+</div></nav>
+
+<div class="wrap" id="chooser">
+  <header class="hero">
+    <h1>What are you <em>expecting?</em></h1>
+    <p>Answer five questions about your video. The chooser scores the six
+    styles and tells you which one fits — plus a mix idea when two styles
+    want to combine.</p>
+  </header>
+
+  <div class="q" data-q="q1">
+    <h3>1. What's the content?</h3>
+    <div class="opts">
+      <button class="opt" data-v="education">Education / explainer</button>
+      <button class="opt" data-v="product">Product or app promo</button>
+      <button class="opt" data-v="tutorial">Tutorial / process</button>
+      <button class="opt" data-v="money">Money / finance topic</button>
+      <button class="opt" data-v="motivate">Motivational / portfolio</button>
+    </div>
+  </div>
+
+  <div class="q" data-q="q2">
+    <h3>2. Who's watching?</h3>
+    <div class="opts">
+      <button class="opt" data-v="learners">Students / learners</button>
+      <button class="opt" data-v="customers">Potential customers</button>
+      <button class="opt" data-v="creators">Creators / editors / peers</button>
+      <button class="opt" data-v="casual">General audience, casual scroll</button>
+    </div>
+  </div>
+
+  <div class="q" data-q="q3">
+    <h3>3. What's the mood?</h3>
+    <div class="opts">
+      <button class="opt" data-v="calm">Calm, premium, trustworthy</button>
+      <button class="opt" data-v="hype">Hype, maximal, fast</button>
+      <button class="opt" data-v="playful">Playful, fun</button>
+      <button class="opt" data-v="serious">Serious, premium</button>
+    </div>
+  </div>
+
+  <div class="q" data-q="q4">
+    <h3>4. Speaker or no speaker?</h3>
+    <div class="opts">
+      <button class="opt" data-v="speaker">Talking head on camera</button>
+      <button class="opt" data-v="nospeaker">No speaker — graphics only</button>
+    </div>
+  </div>
+
+  <div class="q" data-q="q5">
+    <h3>5. Subtitle need?</h3>
+    <div class="opts">
+      <button class="opt" data-v="full">Full captions synced to speech</button>
+      <button class="opt" data-v="keywords">Keyword emphasis only</button>
+      <button class="opt" data-v="none">None — graphics carry it</button>
+    </div>
+  </div>
+
+  <div id="result"></div>
+
+  <section class="block">
+    <h2 class="sec">Prefer the matrix?</h2>
+    <p class="lead">The same logic lives in <a href="../INTAKE.md">INTAKE.md</a> as a written recommendation table — handy when you're offline.</p>
+  </section>
+</div>
+
+<footer><div class="wrap">
+  <span>Video Style Playbook — reverse-engineered from real viral reels, frame by frame.</span>
+  <span><a href="../README.md">README</a> · <a href="../RECIPES.md">Recipes</a></span>
+</div></footer>
+<script src="assets/site.js"></script>
+</body>
+</html>

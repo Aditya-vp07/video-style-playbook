@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Warm Editorial — Video Style Playbook</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="../index.html">Video Style <span>Playbook</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Styles</a>
+    <a href="../chooser.html">Style chooser</a>
+    <a href="../../STYLES.md">Specs</a>
+    <a href="../../RECIPES.md">Recipes</a>
+  </div>
+</div></nav>
+<div class="wrap">
+  <header class="hero">
+    <h1>Warm Editorial</h1>
+    <div class="tags"><span class="tag">calm</span><span class="tag">premium</span><span class="tag">credible</span><span class="tag">speaker</span></div>
+    <p>Cream + ink, butter-yellow chips, blur-resolve serif titles. The calm-authority premium explainer — restraint is the whole aesthetic.</p>
+    <p class="lead" style="font-size:14px">Source: “How does AI work? episode 01” (118.7s timestamped beat map)</p>
+  </header>
+
+  <section class="block">
+    <h2 class="sec">Palette</h2>
+    <p class="lead">Click any swatch to copy its hex.</p>
+    <div class="swatches">
+      <div class="swatch" data-copy="#F8F7F2">
+        <div class="color" style="background:#F8F7F2"></div>
+        <div class="meta"><b>Cream</b><code>#F8F7F2</code></div>
+      </div>
+      <div class="swatch" data-copy="#1E1E1E">
+        <div class="color" style="background:#1E1E1E"></div>
+        <div class="meta"><b>Ink</b><code>#1E1E1E</code></div>
+      </div>
+      <div class="swatch" data-copy="#F2C14E">
+        <div class="color" style="background:#F2C14E"></div>
+        <div class="meta"><b>Butter-yellow chip</b><code>#F2C14E</code></div>
+      </div>
+      <div class="swatch" data-copy="#1E2A44">
+        <div class="color" style="background:#1E2A44"></div>
+        <div class="meta"><b>Navy chip text</b><code>#1E2A44</code></div>
+      </div>
+      <div class="swatch" data-copy="#22262B">
+        <div class="color" style="background:#22262B"></div>
+        <div class="meta"><b>Charcoal chip</b><code>#22262B</code></div>
+      </div>
+      <div class="swatch" data-copy="#D06D58">
+        <div class="color" style="background:#D06D58"></div>
+        <div class="meta"><b>Terracotta</b><code>#D06D58</code></div>
+      </div>
+      <div class="swatch" data-copy="#2E5BFF">
+        <div class="color" style="background:#2E5BFF"></div>
+        <div class="meta"><b>Credential blue</b><code>#2E5BFF</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Type system</h2>
+    <div class="specimen">
+      <div class="row">
+        <div class="lbl">Hero title — Didone italic serif</div>
+        <div style="font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 64px; color: #1E1E1E; line-height: 1.05">AI work?</div>
+      </div>
+      <div class="row">
+        <div class="lbl">Kicker — italic serif small</div>
+        <div style="font-family: Georgia, serif; font-style: italic; font-size: 22px; color: #6b6b66">episode 01</div>
+      </div>
+      <div class="row">
+        <div class="lbl">Brand beat — bold grotesque</div>
+        <div style="font-family: Arial, sans-serif; font-weight: 900; font-size: 34px; letter-spacing: -0.02em; color: #1E1E1E">ANTHROPIC</div>
+      </div>
+      <div class="row">
+        <div class="lbl">Chip — geometric sans</div>
+        <div style="font-family: Verdana, sans-serif; font-weight: 600; font-size: 18px; background: #F2C14E; color: #1E2A44; display: inline-block; padding: 8px 20px; border-radius: 999px">neural network</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Caption / subtitle system</h2>
+    <p class="lead">Three flavors on an emphasis rhythm — pill = emphasis, no-pill = filler. Phrase-level swaps with a 150ms pop. No karaoke.</p>
+    <div class="code-wrap">
+      <button class="copy-btn" data-copy=".chip-yellow {
+  background: #F2C14E; color: #1E2A44;
+  border-radius: 999px; padding: 18px 36px;
+  font: 600 34px/1 &quot;Inter&quot;, sans-serif;
+}
+.chip-dark {
+  background: rgba(34,38,43,.85); color: #fff;
+  border-radius: 999px; padding: 18px 36px;
+  font: 600 34px/1 &quot;Inter&quot;, sans-serif;
+}
+.chip-plain { color: #fff; font: 600 34px/1.3 &quot;Inter&quot;, sans-serif;
+  text-shadow: 0 2px 12px rgba(0,0,0,.45); }
+/* title entrance */
+@keyframes blur-resolve {
+  from { filter: blur(26px); opacity: 0; transform: scale(.96); }
+  to   { filter: blur(0);    opacity: 1; transform: scale(1); }
+}
+.title-word { animation: blur-resolve 1.8s cubic-bezier(.16,1,.3,1) both; }">Copy CSS</button>
+      <pre class="code">.chip-yellow {
+  background: #F2C14E; color: #1E2A44;
+  border-radius: 999px; padding: 18px 36px;
+  font: 600 34px/1 &quot;Inter&quot;, sans-serif;
+}
+.chip-dark {
+  background: rgba(34,38,43,.85); color: #fff;
+  border-radius: 999px; padding: 18px 36px;
+  font: 600 34px/1 &quot;Inter&quot;, sans-serif;
+}
+.chip-plain { color: #fff; font: 600 34px/1.3 &quot;Inter&quot;, sans-serif;
+  text-shadow: 0 2px 12px rgba(0,0,0,.45); }
+/* title entrance */
+@keyframes blur-resolve {
+  from { filter: blur(26px); opacity: 0; transform: scale(.96); }
+  to   { filter: blur(0);    opacity: 1; transform: scale(1); }
+}
+.title-word { animation: blur-resolve 1.8s cubic-bezier(.16,1,.3,1) both; }</pre>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Motion grammar</h2>
+    <ul class="tight">
+      <li><b>Blur→sharp staggered word resolve</b> — ~1.5–2s hero lockups, &lt;0.5s single-word beats.</li>
+      <li><b>Camera zoom fires on the same word timestamps</b> as the title (pullback on open, push-ins on key beats).</li>
+      <li><b>Letter-spacing animates wide</b> on extent words (“Sa mp le”) — text performs meaning.</li>
+      <li>Diagram acts: bars grow, dotted trajectories draw, scene pans horizontally; stepper pills on top.</li>
+      <li>Hard cuts; warm grade — soft daylight, 15% black scrim over top 300px, mild grain.</li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Layout rules</h2>
+    <ul class="tight">
+      <li>Titles: y 170–450 (below IG progress bar), centered; list variant top-left x≈225.</li>
+      <li>Chips: centered x≈540; y≈1390–1470 (talking head), y≈1158 (diagram boundary). Nothing below y≈1570.</li>
+      <li>Key content within x 90–990 (clear of right action rail).</li>
+      <li>Floating graphic cards: cream #FBFAF7, radius ~28px, soft shadow, slide in from left (scale 0.9→1); speaker ducks to bottom ~45%.</li>
+    </ul>
+  </section>
+
+  <section class="block why">
+    <h2 class="sec">Why use it</h2>
+    <p class="lead">The calm-authority premium explainer. One serif, one grotesque, three chip colors — and motion synced to word timestamps, not decoration. Lowest risk of looking cheap.</p>
+    <p><b>Best for:</b> Education, AI/tech explainers, product walkthroughs with credibility</p>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Scenario examples</h2>
+    <p class="lead">Mockup frames in this style's exact palette and type language. Video versions come later.</p>
+    <div class="scen-grid">
+      <div class="scen">
+        <img src="../../examples/warm-editorial/01-hook.webp" alt="Hook / title card">
+        <div class="cap"><b>Hook / title card</b> — Serif hero lockup with kicker</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/warm-editorial/02-caption-beat.webp" alt="Talking-head caption beat">
+        <div class="cap"><b>Talking-head caption beat</b> — Butter-yellow chip over speaker</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/warm-editorial/03-data-panel.webp" alt="Stat / data panel">
+        <div class="cap"><b>Stat / data panel</b> — Diagram act with stepper pills + slider</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/warm-editorial/04-comparison-panel.webp" alt="Product / comparison panel">
+        <div class="cap"><b>Product / comparison panel</b> — Floating UI card, terracotta badge</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/warm-editorial/05-end-card.webp" alt="End card / CTA">
+        <div class="cap"><b>End card / CTA</b> — Serif close + subscribe pill</div>
+      </div>
+    </div>
+  </section>
+</div>
+<footer><div class="wrap">
+  <span>Video Style Playbook — reverse-engineered from real viral reels, frame by frame.</span>
+  <span><a href="../../README.md">README</a> · <a href="../../RECIPES.md">Recipes</a></span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

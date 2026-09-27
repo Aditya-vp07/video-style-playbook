@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neon Product Ad — Video Style Playbook</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="../index.html">Video Style <span>Playbook</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Styles</a>
+    <a href="../chooser.html">Style chooser</a>
+    <a href="../../STYLES.md">Specs</a>
+    <a href="../../RECIPES.md">Recipes</a>
+  </div>
+</div></nav>
+<div class="wrap">
+  <header class="hero">
+    <h1>Neon Product Ad</h1>
+    <div class="tags"><span class="tag">hype</span><span class="tag">no-speaker</span><span class="tag">sells</span></div>
+    <p>Magenta-glow keywords, static chrome frame, “4 HOURS vs 10 MINUTES” contrast chips. The product-ad formula — selling through contrast.</p>
+    <p class="lead" style="font-size:14px">Source: “COMMENT AI” neon product ad (11.15s, pure motion graphics)</p>
+  </header>
+
+  <section class="block">
+    <h2 class="sec">Palette</h2>
+    <p class="lead">Click any swatch to copy its hex.</p>
+    <div class="swatches">
+      <div class="swatch" data-copy="#120C26">
+        <div class="color" style="background:#120C26"></div>
+        <div class="meta"><b>Content panel</b><code>#120C26</code></div>
+      </div>
+      <div class="swatch" data-copy="#FF3FD4">
+        <div class="color" style="background:#FF3FD4"></div>
+        <div class="meta"><b>Magenta glow</b><code>#FF3FD4</code></div>
+      </div>
+      <div class="swatch" data-copy="#E8439B">
+        <div class="color" style="background:#E8439B"></div>
+        <div class="meta"><b>Highlight bar</b><code>#E8439B</code></div>
+      </div>
+      <div class="swatch" data-copy="#1B1433">
+        <div class="color" style="background:#1B1433"></div>
+        <div class="meta"><b>Icon square</b><code>#1B1433</code></div>
+      </div>
+      <div class="swatch" data-copy="#9D8DF1">
+        <div class="color" style="background:#9D8DF1"></div>
+        <div class="meta"><b>Lavender glyph</b><code>#9D8DF1</code></div>
+      </div>
+      <div class="swatch" data-copy="#4796E3">
+        <div class="color" style="background:#4796E3"></div>
+        <div class="meta"><b>Blue star</b><code>#4796E3</code></div>
+      </div>
+      <div class="swatch" data-copy="#140F22">
+        <div class="color" style="background:#140F22"></div>
+        <div class="meta"><b>Chip black</b><code>#140F22</code></div>
+      </div>
+      <div class="swatch" data-copy="#F2F2F2">
+        <div class="color" style="background:#F2F2F2"></div>
+        <div class="meta"><b>Vignette light</b><code>#F2F2F2</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Type system</h2>
+    <div class="specimen">
+      <div class="row">
+        <div class="lbl">Keyword — neon glow</div>
+        <div style="font-family: Arial, sans-serif; font-weight: 800; font-style: italic; font-size: 44px; color: #fff; text-shadow: 0 0 20px #FF3FD4, 0 0 44px #FF3FD4">perfect</div>
+      </div>
+      <div class="row">
+        <div class="lbl">Wordmark — grotesque + stroke</div>
+        <div style="font-family: Arial, sans-serif; font-weight: 900; font-size: 30px; color: #fff; -webkit-text-stroke: 2px #111; letter-spacing: .04em">COMMENT AI</div>
+      </div>
+      <div class="row">
+        <div class="lbl">Contrast chip</div>
+        <div style="font-family: Arial, sans-serif; font-weight: 900; font-size: 30px; color: #fff; background: #140F22; display: inline-block; padding: 12px 26px; border-radius: 28px">10 MINUTES</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Caption / subtitle system</h2>
+    <p class="lead">No subtitle system at all — the panel copy IS the narration. The selling mechanic is visual time-contrast.</p>
+    <div class="code-wrap">
+      <button class="copy-btn" data-copy=".neon-kw { color: #fff; font: italic 800 64px/1 &quot;Inter&quot;, sans-serif;
+  text-shadow: 0 0 20px #FF3FD4, 0 0 44px #FF3FD4; }
+.neon-panel { background: #120C26; }
+.contrast-chip { background: #140F22; color: #fff;
+  border-radius: 28px; padding: 24px 40px;
+  font: 900 90px/1 &quot;Inter&quot;, sans-serif; }
+/* hard wipe between beats */
+.beat { animation: wipe .4s ease-in both; }
+@keyframes wipe { from { transform: translateX(100%);} to { transform: none; } }">Copy CSS</button>
+      <pre class="code">.neon-kw { color: #fff; font: italic 800 64px/1 &quot;Inter&quot;, sans-serif;
+  text-shadow: 0 0 20px #FF3FD4, 0 0 44px #FF3FD4; }
+.neon-panel { background: #120C26; }
+.contrast-chip { background: #140F22; color: #fff;
+  border-radius: 28px; padding: 24px 40px;
+  font: 900 90px/1 &quot;Inter&quot;, sans-serif; }
+/* hard wipe between beats */
+.beat { animation: wipe .4s ease-in both; }
+@keyframes wipe { from { transform: translateX(100%);} to { transform: none; } }</pre>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Motion grammar</h2>
+    <ul class="tight">
+      <li><b>Hard 0.3–0.5s leftward wipes</b> between beats. No fades, ever.</li>
+      <li>Static chrome frame persists: header wordmark + logo row + bottom contrast chips.</li>
+      <li>Keyword glow pulses on the selling word. 5-beat structure: quote → object → before/after → calendar → payoff.</li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Layout rules</h2>
+    <ul class="tight">
+      <li>Content panel: full-bleed dark #120C26, y≈290–1130.</li>
+      <li>Header: title center (y≈115), app icons top-left, brand lockup right — asymmetric.</li>
+      <li>Bottom contrast chips: two black rounded chips, slight vertical stagger — “4 HOURS” vs “10 MINUTES”.</li>
+    </ul>
+  </section>
+
+  <section class="block why">
+    <h2 class="sec">Why use it</h2>
+    <p class="lead">Built for selling through contrast. The fixed chrome frame means the brand is always visible while content rotates underneath — steal the contrast-chip device even outside this style.</p>
+    <p><b>Best for:</b> App promos, tool launches, SaaS ads, before→after selling</p>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Scenario examples</h2>
+    <p class="lead">Mockup frames in this style's exact palette and type language. Video versions come later.</p>
+    <div class="scen-grid">
+      <div class="scen">
+        <img src="../../examples/neon-product-ad/01-hook.webp" alt="Hook / title card">
+        <div class="cap"><b>Hook / title card</b> — Chrome header + glowing keyword</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/neon-product-ad/02-app-beat.webp" alt="App screen beat">
+        <div class="cap"><b>App screen beat</b> — Before/after phone mockups</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/neon-product-ad/03-data-panel.webp" alt="Stat / data panel">
+        <div class="cap"><b>Stat / data panel</b> — Calendar grid, red-circled days</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/neon-product-ad/04-comparison-panel.webp" alt="Product / comparison panel">
+        <div class="cap"><b>Product / comparison panel</b> — 4 HOURS vs 10 MINUTES chips</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/neon-product-ad/05-end-card.webp" alt="End card / CTA">
+        <div class="cap"><b>End card / CTA</b> — “you start now” neon payoff</div>
+      </div>
+    </div>
+  </section>
+</div>
+<footer><div class="wrap">
+  <span>Video Style Playbook — reverse-engineered from real viral reels, frame by frame.</span>
+  <span><a href="../../README.md">README</a> · <a href="../../RECIPES.md">Recipes</a></span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

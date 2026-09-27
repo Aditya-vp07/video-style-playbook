@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mono Kinetic Type — Video Style Playbook</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="../index.html">Video Style <span>Playbook</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Styles</a>
+    <a href="../chooser.html">Style chooser</a>
+    <a href="../../STYLES.md">Specs</a>
+    <a href="../../RECIPES.md">Recipes</a>
+  </div>
+</div></nav>
+<div class="wrap">
+  <header class="hero">
+    <h1>Mono Kinetic Type</h1>
+    <div class="tags"><span class="tag">type-as-content</span><span class="tag">no-speaker</span><span class="tag">monochrome</span></div>
+    <p>Dashed selection boxes with anchor handles, swoosh wipes, strict monochrome. The workshop aesthetic — process as content.</p>
+    <p class="lead" style="font-size:14px">Source: “Skill over Scroll” kinetic-typography reel (pure type, no speaker)</p>
+  </header>
+
+  <section class="block">
+    <h2 class="sec">Palette</h2>
+    <p class="lead">Click any swatch to copy its hex.</p>
+    <div class="swatches">
+      <div class="swatch" data-copy="#F5F5F3">
+        <div class="color" style="background:#F5F5F3"></div>
+        <div class="meta"><b>Paper</b><code>#F5F5F3</code></div>
+      </div>
+      <div class="swatch" data-copy="#141414">
+        <div class="color" style="background:#141414"></div>
+        <div class="meta"><b>Ink</b><code>#141414</code></div>
+      </div>
+      <div class="swatch" data-copy="#6E6E6E">
+        <div class="color" style="background:#6E6E6E"></div>
+        <div class="meta"><b>Gray</b><code>#6E6E6E</code></div>
+      </div>
+      <div class="swatch" data-copy="#D8D8D8">
+        <div class="color" style="background:#D8D8D8"></div>
+        <div class="meta"><b>Dot grid</b><code>#D8D8D8</code></div>
+      </div>
+      <div class="swatch" data-copy="#2FA8A0">
+        <div class="color" style="background:#2FA8A0"></div>
+        <div class="meta"><b>Teal accent</b><code>#2FA8A0</code></div>
+      </div>
+      <div class="swatch" data-copy="#8A6D3B">
+        <div class="color" style="background:#8A6D3B"></div>
+        <div class="meta"><b>Brass accent</b><code>#8A6D3B</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Type system</h2>
+    <div class="specimen">
+      <div class="row">
+        <div class="lbl">Keyword — heavy grotesque</div>
+        <div style="font-family: 'Arial Black', Arial, sans-serif; font-weight: 900; font-size: 46px; color: #141414; letter-spacing: -.01em">NO MAGIC PILLS</div>
+      </div>
+      <div class="row">
+        <div class="lbl">Quote — italic serif</div>
+        <div style="font-family: Georgia, serif; font-style: italic; font-size: 20px; color: #6E6E6E">“Here is the truth.”</div>
+      </div>
+      <div class="row">
+        <div class="lbl">Selection box</div>
+        <div style="font-family: 'Arial Black', Arial, sans-serif; font-weight: 900; font-size: 30px; color: #141414; border: 2px dashed #141414; display: inline-block; padding: 10px 22px; position: relative">HARDWORK ▢</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Caption / subtitle system</h2>
+    <p class="lead">No subtitles — the type IS the content. Marquees and letter-by-letter typing carry the narration.</p>
+    <div class="code-wrap">
+      <button class="copy-btn" data-copy=".select-box { border: 1.5px dashed #141414; position: relative;
+  display: inline-block; padding: 14px 28px;
+  font: 900 64px/1 &quot;Arial Black&quot;, sans-serif; color: #141414; }
+/* anchor handles via ::before/::after + box-shadow copies */
+.marquee { overflow: hidden; white-space: nowrap; }
+.marquee span { display: inline-block;
+  animation: scroll 12s linear infinite; }
+@keyframes scroll { to { transform: translateX(-50%); } }">Copy CSS</button>
+      <pre class="code">.select-box { border: 1.5px dashed #141414; position: relative;
+  display: inline-block; padding: 14px 28px;
+  font: 900 64px/1 &quot;Arial Black&quot;, sans-serif; color: #141414; }
+/* anchor handles via ::before/::after + box-shadow copies */
+.marquee { overflow: hidden; white-space: nowrap; }
+.marquee span { display: inline-block;
+  animation: scroll 12s linear infinite; }
+@keyframes scroll { to { transform: translateX(-50%); } }</pre>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Motion grammar</h2>
+    <ul class="tight">
+      <li><b>Dashed selection boxes</b> with anchor handles; arrow cursor drags them; text types in letter-by-letter.</li>
+      <li>Diagonal swoosh wipes, kinetic marquee R→L with motion blur, scale-pop on boxes.</li>
+      <li>Slow blurred-blob drift at edges. Hard cuts, ~2–2.5s per beat.</li>
+      <li>Closer: black side bars squeeze in (letterbox close) → end card.</li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Layout rules</h2>
+    <ul class="tight">
+      <li>Paper #F5F5F3 + faint dot grid (1.5px dots, 28px spacing).</li>
+      <li>Strictly monochrome — ONE colored 3D object per video as the accent (teal phone / brass watch).</li>
+      <li>~7 beats per 16s; type always the hero, never decoration.</li>
+    </ul>
+  </section>
+
+  <section class="block why">
+    <h2 class="sec">Why use it</h2>
+    <p class="lead">Type-driven storytelling with zero speaker needed. The monochrome restraint + one moving device (selection boxes) makes it cheap to produce and instantly recognizable.</p>
+    <p><b>Best for:</b> Motivational content, “hard truths” posts, editor portfolio pieces, quote explainers</p>
+  </section>
+
+  <section class="block">
+    <h2 class="sec">Scenario examples</h2>
+    <p class="lead">Mockup frames in this style's exact palette and type language. Video versions come later.</p>
+    <div class="scen-grid">
+      <div class="scen">
+        <img src="../../examples/mono-kinetic/01-hook.webp" alt="Hook / title card">
+        <div class="cap"><b>Hook / title card</b> — Dashed box + cursor drag</div>
+      </div>
+      <div class="scen pending">
+        <div class="ph">Pending —<br>regenerating</div>
+        <div class="cap"><b>Kinetic beat</b> — NO MAGIC PILLS — regenerating</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/mono-kinetic/03-data-panel.webp" alt="Stat / data panel">
+        <div class="cap"><b>Stat / data panel</b> — Marquee + dashed boxes</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/mono-kinetic/04-comparison-panel.webp" alt="Product / comparison panel">
+        <div class="cap"><b>Product / comparison panel</b> — Swoosh wipe before/after</div>
+      </div>
+      <div class="scen">
+        <img src="../../examples/mono-kinetic/05-end-card.webp" alt="End card / CTA">
+        <div class="cap"><b>End card / CTA</b> — Letterbox close</div>
+      </div>
+    </div>
+  </section>
+</div>
+<footer><div class="wrap">
+  <span>Video Style Playbook — reverse-engineered from real viral reels, frame by frame.</span>
+  <span><a href="../../README.md">README</a> · <a href="../../RECIPES.md">Recipes</a></span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>
