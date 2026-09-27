@@ -1,5 +1,7 @@
 # Video Style Playbook
 
+**🌐 Live site: https://aditya-vp07.github.io/video-style-playbook/** — browse all styles, examples, and techniques in your browser.
+
 A style-reference + recipe library for **vertical (9:16) motion-graphics
 editing** — built by reverse-engineering real viral reels and YouTube
 videos frame-by-frame.
