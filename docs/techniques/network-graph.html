@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Network Graph — Video Style Playbook</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="../index.html">Video Style <span>Playbook</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Styles</a>
+    <a href="../chooser.html">Style chooser</a>
+    <a href="index.html" class="active">Techniques</a>
+    <a href="../../RECIPES.md">Recipes</a>
+  </div>
+</div></nav>
+<div class="wrap">
+<h1>Network graph — investigation-style relationship mapping</h1>
+<p>How to build a live network map where **links draw without messing up node routes**: nodes travel, links follow, labels stay readable. This is the core of the &quot;follow the money / who funds whom&quot; visual language. All geometry @1080×1920 panel space (use the panel&#x27;s own coordinate system; the panel here is 1080×576 in fusion layouts — same math).</p>
+<h2 class="sec">The sequencing contract (this is the whole trick)</h2>
+<p>Links and nodes are <b>never animated at the same time</b>. Strict order per beat:</p>
+<ul class="tight">
+<li><b>Links draw</b> — bezier path trims 0→1, <code>ease_in_out_cubic</code>, 0.4s each, staggered 60ms.</li>
+<li><b>Nodes travel</b> — only after their link is fully drawn. Node moves along a straight line to its slot, <code>ease_out_expo</code>, 0.6s, staggered 80ms per node.</li>
+<li><b>Labels/chips fade-pop</b> — after the node lands, 0.15s pop (scale 0.9→1).</li>
+</ul>
+<p>Why it works: a traveling node dragging a half-drawn link looks like spaghetti. Drawing the route first, then traveling the node along the *already-visible* route, reads as &quot;the entity follows the money&quot;.</p>
+<h2 class="sec">Node placement — readable by construction</h2>
+<ul class="tight">
+<li><b>Ring layout:</b> hub node at panel center; satellites on an ellipse. Ring 1: ≤6 nodes. Ring 2 (if needed): ≤10 nodes, radius ×1.8.</li>
+<li><b>Deterministic slots:</b> precompute slot angles with a seeded shuffle so re-renders are identical. Slot angle jitter ≤ ±8° to break symmetry.</li>
+<li><b>Keepout radius:</b> <code>r = max(node_r, label_halfwidth) + 24px</code>. No two keepout circles may overlap — if they do, push the satellite outward along its radial (never tangentially; radial moves preserve the mental model).</li>
+<li><b>Cap:</b> satellite node ≤ 1.15× hub scale at entrance; relationship chips ≤ half the node label width (chips overlapping node labels at rest was a real defect in our PRO build — enforce the cap).</li>
+</ul>
+<h2 class="sec">Bezier link routing (no spaghetti)</h2>
+<p>Each link is a quadratic bezier: <code>P0</code> (hub edge) → <code>C</code> (control) → <code>P1</code> (satellite edge).</p>
+<div class="code-wrap"><pre class="code">
+import math
+def link_bezier(p0, p1, bend=0.22, side=1):
+    &quot;&quot;&quot;Control point pushed perpendicular so links arc around the hub.&quot;&quot;&quot;
+    mx, my = (p0[0]+p1[0])/2, (p0[1]+p1[1])/2
+    dx, dy = p1[0]-p0[0], p1[1]-p0[1]
+    L = math.hypot(dx, dy) or 1
+    # perpendicular unit vector, bent away from center
+    px, py = -dy/L * side, dx/L * side
+    C = (mx + px*L*bend, my + py*L*bend)
+    return p0, C, p1
+
+def bez_point(p0, C, p1, t):
+    u = 1-t
+    return (u*u*p0[0] + 2*u*t*C[0] + t*t*p1[0],
+            u*u*p0[1] + 2*u*t*C[1] + t*t*p1[1])
+</pre></div>
+<p>Rules:</p>
+<ul class="tight">
+<li><code>bend=0.22</code> default; alternate <code>side</code> (+1/−1) per link so arcs don&#x27;t stack on one side.</li>
+<li>Link starts/ends at <b>node edges</b>, not centers: shrink P0/P1 toward the segment by the node radius.</li>
+<li>Link width 2–3px; color = dim version of the style accent (e.g. <code>#4c8fa2</code> on the dark collage style). Hub links brighter than satellite-to-satellite links.</li>
+<li><b>Trim animation:</b> draw the bezier progressively — sample N points, reveal <code>k = int(N * ease_in_out_cubic(u))</code> points per frame.</li>
+</ul>
+<h2 class="sec">Staggered node entrances</h2>
+<div class="code-wrap"><pre class="code">
+def entrance_schedule(nodes, link_draw_dur=0.4, link_stagger=0.06,
+                      node_dur=0.6, node_stagger=0.08):
+    &quot;&quot;&quot;Returns {node_id: (link_t0, node_t0)} in seconds.&quot;&quot;&quot;
+    sched = {}
+    t = 0.0
+    for i, n in enumerate(nodes):
+        link_t0 = t + i * link_stagger
+        node_t0 = link_t0 + link_draw_dur   # node waits for its link
+        sched[n] = (link_t0, node_t0)
+        t = link_t0
+    return sched
+</pre></div>
+<ul class="tight">
+<li>Node travel path: straight line from spawn point (panel edge nearest its slot, or hub center for the first node) to slot, <code>ease_out_expo</code>.</li>
+<li>Entrance scale: 0.6→1.0 (never above 1.15×).</li>
+</ul>
+<h2 class="sec">Label placement rules</h2>
+<ul class="tight">
+<li>Label sits <b>below</b> the node center, <code>node_r + 14px</code>.</li>
+<li>Max 2 lines, 28–34px sans, centered. Long names get a <b>relationship chip</b> instead: small rounded chip (<code>radius=½h</code>) offset along the link&#x27;s perpendicular, 18px from the link midpoint.</li>
+<li>Chips never overlap node keepout circles — check at rest, nudge the chip along the link tangent if needed.</li>
+<li>Real faces/logos: circular crop, white 2px ring, drop shadow. Logos get a white rounded-square badge (never a text pill).</li>
+<li>Active-node label brightens to full white; inactive labels dim to 55% opacity when another node is highlighted.</li>
+</ul>
+<h2 class="sec">Highlight / pulse grammar</h2>
+<ul class="tight">
+<li><b>Pulse:</b> expanding ring stroke on the active node — radius <code>node_r → node_r+26px</code> over 0.8s, alpha 0.8→0, loop 2×, then rest.</li>
+<li><b>Highlight:</b> active node scale 1.0→1.15 (<code>ease_out_expo</code>, 0.4s); its links brighten to full accent; everything else dims to 55%.</li>
+<li><b>Slam (the REGULATORY CAPTURE moment):</b> full-panel title card, 150–180px grotesque, 0.3s scale 1.6→1.0 <code>ease_out_expo</code> + 0.1s hold before the network resumes. One per video max.</li>
+</ul>
+<h2 class="sec">Draw order (PIL, per frame)</h2>
+<div class="code-wrap"><pre class="code">
+1. panel background
+2. links (dim) 
+3. highlighted links (bright)
+4. node badges (face/logo)
+5. nodes (circles)
+6. pulse rings
+7. relationship chips
+8. labels
+9. slam card (if active)
+</pre></div>
+<h2 class="sec">Readability checklist</h2>
+<ul class="tight">
+<li>☐ ≤6 satellites on ring 1; ring 2 only if the script demands it.</li>
+<li>☐ No keepout-circle overlaps at rest (check programmatically).</li>
+<li>☐ Chips ≤ half node-label width.</li>
+<li>☐ Links drawn before nodes travel — never simultaneous.</li>
+<li>☐ Inactive elements dim to 55% during highlight.</li>
+<li>☐ Max one slam card per video.</li>
+</ul>
+</div>
+<footer><div class="wrap">
+  <span>Video Style Playbook — reverse-engineered from real viral reels, frame by frame.</span>
+  <span><a href="../../README.md">README</a> · <a href="../../RECIPES.md">Recipes</a></span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -8,11 +8,27 @@ This is the *"which style should I use, and how"* companion repo. It
 doesn't build videos; it tells you exactly which visual language to
 speak and gives you copy-paste specs to build it.
 
+## Who this is for
+
+Aditya's main use case: **end-to-end talking-head → motion-graphics
+fusion videos** — he sends a talking-head video, the pipeline returns a
+finished reel with animated panels, networks, slams, and captions baked
+in. This repo is the style + technique reference that pipeline builds
+from: *which visual language to speak* (`STYLES.md`, `INTAKE.md`) and
+*how to engineer each motion* (`techniques/`).
+
 ## What's inside
 
 - **`STYLES.md`** — the catalog: 6 styles with palette, type system,
   caption rules, motion grammar, layout, safe zones, and *why to use
   each one*.
+- **`techniques/`** — the implementation track: code-ready playbooks
+  for pro-grade motion on our ffmpeg/Python stack — `camera.md`
+  (buttery GSAP-grade virtual camera), `network-graph.md`
+  (investigation-style relationship mapping), `fusion-layouts.md`
+  (talking-head + graphics grammar), `ai-clip-planning.md`
+  (prompt discipline for generated clips), and `ANALYSIS-PROTOCOL.md`
+  (the forensic DNA-capture method, repeatable for new videos).
 - **`INTAKE.md`** — the "what are you expecting?" questionnaire: answer
   5 questions → get a style recommendation + fallback mixes.
 - **`RECIPES.md`** — concrete build recipes with copy-paste params

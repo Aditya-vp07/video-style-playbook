@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion Layouts — Video Style Playbook</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="../index.html">Video Style <span>Playbook</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Styles</a>
+    <a href="../chooser.html">Style chooser</a>
+    <a href="index.html" class="active">Techniques</a>
+    <a href="../../RECIPES.md">Recipes</a>
+  </div>
+</div></nav>
+<div class="wrap">
+<h1>Fusion layouts — talking-head + graphics grammar</h1>
+<p>Aditya&#x27;s main use case: a talking-head video fused with motion graphics. This doc is the <b>layout state machine</b> — when the speaker is full-frame, when they shrink, when graphics take over completely, and how the transitions read. Drive it from the cue sheet.</p>
+<h2 class="sec">The four states</h2>
+<table class="cmp"><tr><th>State</th><th>Speaker</th><th>Graphics</th><th>When</th></tr>
+<tr><td><code>FULL_HEAD</code></td><td>full frame</td><td>lower-third / caption only</td><td>personal story, opinion, direct address</td></tr>
+<tr><td><code>HEAD_PIP</code></td><td>corner PiP</td><td>graphic canvas dominates</td><td>important word lands while evidence shows</td></tr>
+<tr><td><code>SPLIT_55</code></td><td>bottom 52–100%</td><td>top 0–48% panel</td><td>demo / process narration</td></tr>
+<tr><td><code>FULL_GRAPHIC</code></td><td>gone</td><td>full-frame takeover</td><td>data, diagrams, network maps, slams</td></tr>
+</table>
+<p>Geometry @1080×1920 (panel-only 1080×576 uses the same ratios):</p>
+<ul class="tight">
+<li><code>HEAD_PIP</code>: speaker cutout x 0.55–1.0, y 0.62–1.0, no border, soft drop shadow. Free-floating caption (shadowed, no pill).</li>
+<li><code>SPLIT_55</code>: graphic panel top 0–48% on paper texture with faint construction guides; black pill caption ON the seam (y≈920–1050).</li>
+<li><code>FULL_HEAD</code>: speaker center, head y≈350–750; captions y 1390–1470.</li>
+<li>PiP and split use <b>identical corner radii</b> (~60px) so swaps don&#x27;t reflow the eye.</li>
+</ul>
+<h2 class="sec">The cue-sheet contract</h2>
+<p>Annotate every beat with a layout intent. Add one field to each cue:</p>
+<div class="code-wrap"><pre class="code">
+beat 12 | t=34.2-41.0 | layout: HEAD_PIP | trigger: emphasis(&quot;capture&quot;)
+beat 13 | t=41.0-58.3 | layout: FULL_GRAPHIC | trigger: evidence(diagram_act_1)
+beat 14 | t=58.3-63.9 | layout: FULL_HEAD | trigger: personal(&quot;when I first saw this&quot;)
+</pre></div>
+<p>Trigger vocabulary (keep it small):</p>
+<ul class="tight">
+<li><code>emphasis(word)</code> — an important word lands → <code>HEAD_PIP</code>.</li>
+<li><code>evidence(kind)</code> — diagram / network / chart / comparison → <code>FULL_GRAPHIC</code>.</li>
+<li><code>demo(kind)</code> — screen-record / process → <code>SPLIT_55</code>.</li>
+<li><code>personal(phrase)</code> — story, opinion, direct address → <code>FULL_HEAD</code>.</li>
+<li><code>slam(word)</code> — title-card moment → <code>FULL_GRAPHIC</code> + slam overlay.</li>
+</ul>
+<h2 class="sec">When to shrink vs when to go full-graphic</h2>
+<p><b>Shrink to PiP when:</b></p>
+<ul class="tight">
+<li>The narration names an entity AND the graphic shows it (face/logo appears while he says the name).</li>
+<li>A keyword needs emphasis but the sentence is still personal (&quot;…and that&#x27;s what regulatory *capture* means&quot;).</li>
+<li>The graphic is a *reaction* to the words (pop, chip, small card).</li>
+</ul>
+<p><b>Go full-graphic when:</b></p>
+<ul class="tight">
+<li>The beat is evidence: diagrams, networks, timelines, comparisons. The speaker adds nothing visually here — their voice carries it.</li>
+<li>A slam word lands (REGULATORY CAPTURE). Full-panel title, no face.</li>
+<li>Screen-record / UI demo fills the frame.</li>
+</ul>
+<p><b>Return to full head when:</b></p>
+<ul class="tight">
+<li>Personal pronoun density spikes (&quot;I&quot;, &quot;my&quot;, &quot;when I…&quot;).</li>
+<li>Direct address (&quot;look&quot;, &quot;think about it&quot;, &quot;you&#x27;ve seen this&quot;).</li>
+<li>Punchline / verdict beats — the face sells the take.</li>
+</ul>
+<p>Rule of thumb: <b>graphics explain, the face persuades.</b> If the beat is explanation → shrink or leave. If the beat is persuasion → face.</p>
+<h2 class="sec">Transition grammar</h2>
+<table class="cmp"><tr><th>From → To</th><th>Transition</th><th>Params</th></tr>
+<tr><td>any → any (beat change)</td><td>hard cut</td><td>default; 0 frames</td></tr>
+<tr><td>any → FULL_GRAPHIC (topic change)</td><td>zoom-through</td><td>out 1.0→1.35 in 0.35s, cut, in 0.85→1.0 in 0.5s</td></tr>
+<tr><td>FULL_HEAD → HEAD_PIP</td><td>shrink-move</td><td>scale 1.0→0.42 + translate to corner, <code>ease_out_expo</code>, 0.5s</td></tr>
+<tr><td>HEAD_PIP → FULL_HEAD</td><td>grow-move</td><td>reverse of shrink-move, 0.5s</td></tr>
+<tr><td>FULL_GRAPHIC → FULL_HEAD</td><td>hard cut</td><td>the face &quot;returns&quot; — a cut reads as confidence</td></tr>
+<tr><td>SPLIT_55 → FULL_GRAPHIC</td><td>panel-expand</td><td>top panel grows to full frame, <code>ease_in_out_cubic</code>, 0.4s</td></tr>
+</table>
+<p>Never cross-dissolve. Never slide the speaker (they scale in place).</p>
+<h2 class="sec">Caption rules per state</h2>
+<ul class="tight">
+<li><code>FULL_HEAD</code>: style&#x27;s caption system (chips / pills / karaoke).</li>
+<li><code>HEAD_PIP</code>: free-floating white bold sans + soft shadow, centered, y≈0.55–0.62 — <b>no pill</b> (the graphic already has enough chrome).</li>
+<li><code>SPLIT_55</code>: black pill on the seam, white bold ~52px, ≤2 lines.</li>
+<li><code>FULL_GRAPHIC</code>: diagram labels + stepper pills; no narration captions (the graphic IS the narration).</li>
+</ul>
+<h2 class="sec">The 70/30 vertical assembly (final delivery)</h2>
+<p>When the deliverable is the fused 1080×1920 reel (not panel-only):</p>
+<ul class="tight">
+<li>Speaker occupies bottom 70% (y≈576–1920).</li>
+<li>Animated panel top 30% (y≈100–676, 1080×576 panel).</li>
+<li>Panel content obeys panel-internal safe zones; the panel&#x27;s own top 100px stays clear (IG progress bar).</li>
+<li>Subtitles sit on the speaker&#x27;s torso area, centered, max ~850px wide, clear of the right action rail and the bottom ~350px caption zone.</li>
+</ul>
+<h2 class="sec">State-machine sketch</h2>
+<div class="code-wrap"><pre class="code">
+STATES = (&quot;FULL_HEAD&quot;, &quot;HEAD_PIP&quot;, &quot;SPLIT_55&quot;, &quot;FULL_GRAPHIC&quot;)
+
+def plan_layout(cues):
+    &quot;&quot;&quot;cues: list of dicts with &#x27;layout&#x27; + &#x27;trigger&#x27;. Returns segments.&quot;&quot;&quot;
+    segs, cur = [], None
+    for c in cues:
+        if c[&quot;layout&quot;] != cur:
+            segs.append({
+                &quot;t0&quot;: c[&quot;t0&quot;], &quot;from&quot;: cur, &quot;to&quot;: c[&quot;layout&quot;],
+                &quot;transition&quot;: pick_transition(cur, c[&quot;layout&quot;], c[&quot;trigger&quot;]),
+            })
+            cur = c[&quot;layout&quot;]
+    return segs
+
+def pick_transition(frm, to, trigger):
+    if frm is None: return &quot;cut&quot;
+    if to == &quot;FULL_GRAPHIC&quot; and trigger.startswith(&quot;evidence&quot;):
+        return &quot;zoom_through&quot;
+    if (frm, to) == (&quot;FULL_HEAD&quot;, &quot;HEAD_PIP&quot;): return &quot;shrink_move&quot;
+    if (frm, to) == (&quot;HEAD_PIP&quot;, &quot;FULL_HEAD&quot;): return &quot;grow_move&quot;
+    if (frm, to) == (&quot;SPLIT_55&quot;, &quot;FULL_GRAPHIC&quot;): return &quot;panel_expand&quot;
+    return &quot;cut&quot;
+</pre></div>
+<h2 class="sec">Checklist</h2>
+<ul class="tight">
+<li>☐ Every cue has a <code>layout</code> + <code>trigger</code>.</li>
+<li>☐ No <code>FULL_GRAPHIC</code> longer than 25s without a face return.</li>
+<li>☐ PiP caption has no pill; seam caption is always a pill.</li>
+<li>☐ Shrink/grow moves are 0.5s <code>ease_out_expo</code>, speaker scales in place.</li>
+<li>☐ Safe zones hold in all four states.</li>
+</ul>
+</div>
+<footer><div class="wrap">
+  <span>Video Style Playbook — reverse-engineered from real viral reels, frame by frame.</span>
+  <span><a href="../../README.md">README</a> · <a href="../../RECIPES.md">Recipes</a></span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

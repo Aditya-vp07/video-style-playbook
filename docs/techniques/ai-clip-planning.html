@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ai Clip Planning — Video Style Playbook</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="../index.html">Video Style <span>Playbook</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Styles</a>
+    <a href="../chooser.html">Style chooser</a>
+    <a href="index.html" class="active">Techniques</a>
+    <a href="../../RECIPES.md">Recipes</a>
+  </div>
+</div></nav>
+<div class="wrap">
+<h1>AI clip planning — prompt discipline for generated video/images/plates</h1>
+<p>AI generation is a <b>spice, not the meal</b>. This doc decides what gets generated, where prompts live, how scenes are cut, how style stays locked — and when to not generate at all.</p>
+<h2 class="sec">What to generate vs what to build</h2>
+<table class="cmp"><tr><th>Generate (AI)</th><th>Build (deterministic)</th></tr>
+<tr><td>Hook plates (0–3s atmospheric openers)</td><td>All text, chips, captions, labels</td></tr>
+<tr><td>Twist/finale plates</td><td>Charts, bar grows, sliders, steppers</td></tr>
+<tr><td>Entity intro cards (BIG face/logo reveal)</td><td>Network graphs, node travel, links</td></tr>
+<tr><td>Texture/backgrounds (paper grain, gradients)</td><td>Transitions, zooms, pans</td></tr>
+<tr><td>B-roll atmosphere (office, crowd, lab)</td><td>UI mockups, phone frames</td></tr>
+<tr><td>Paper-cutout / doodle illustrations</td><td>Anything with numbers or logos</td></tr>
+</table>
+<p>Rule: **if it carries information, build it. If it carries mood, generate it.** Text inside generated clips is forbidden — the model will misspell it and you&#x27;ll re-render for an hour.</p>
+<h2 class="sec">Where prompts live in the pipeline</h2>
+<div class="code-wrap"><pre class="code">
+cue_sheet.md            # beats with t0/t1, layout, trigger
+prompt_pack/
+  beat_03_hook.md       # one file per generated beat
+  beat_11_twist.md
+  beat_17_finale.md
+style_bible.md          # THE style lock (see below)
+</pre></div>
+<p>Each prompt file:</p>
+<div class="code-wrap"><pre class="code">
+# beat 11 — twist plate (t=41.0-44.5, 3.5s)
+NEED: dark atmospheric wide shot, paper-cutout texture, teal rim light
+AVOID: text, faces, logos, watermark-like elements
+STYLE: per style_bible.md §2 (dark collage)
+MOTION: slow push-in, no camera shake
+DURATION: 3.5s, loopable tail (last 0.5s must match first 0.5s framing)
+</pre></div>
+<p>Prompts reference the style bible — never restate the style inline (prompts drift; the bible doesn&#x27;t).</p>
+<h2 class="sec">Style-lock protocol</h2>
+<p><code>style_bible.md</code> (one per project, ~30 lines):</p>
+<ul class="tight">
+<li>Palette hexes (3–5 max), texture words (&quot;paper grain&quot;, &quot;halftone&quot;), light words (&quot;teal rim light&quot;, &quot;soft daylight&quot;), lens words (&quot;shallow DOF&quot;, &quot;35mm&quot;).</li>
+<li>2–3 reference frames (paths to approved stills).</li>
+<li><b>Refusal protocol:</b> a denied/failed prompt is NEVER retried mechanically. Options in order: (1) simplify the prompt (fewer elements), (2) Ken Burns on a style-locked still, (3) reuse an earlier approved clip. Log the refusal with the reason.</li>
+</ul>
+<h2 class="sec">When to cut / when to split scenes</h2>
+<p>Cut on <b>clause boundaries</b> from the cue sheet — never mid-clause. Scene = one idea = one cue-sheet beat group.</p>
+<ul class="tight">
+<li>Max generated clip: <b>5s</b>. Longer → split into two beats with a deterministic bridge (title card, diagram) between them.</li>
+<li>Generated clips sit at: hook (0–3s), twist (mid-video energy reset), finale (last 5s). Max 3–4 generated clips per 3-minute video.</li>
+<li>Everything between generated clips is built motion graphics — that&#x27;s what keeps the video coherent.</li>
+</ul>
+<h2 class="sec">Beat structure (from cue sheets)</h2>
+<div class="code-wrap"><pre class="code">
+HOOK (generated plate, 0-3s) → TITLE (built) → BODY (built, alternating
+fusion states) → TWIST (generated plate, energy reset) → BODY → FINALE
+(generated plate + built slam + CTA)
+</pre></div>
+<p>The generated plates are <b>bookends and pivots</b>. The built middle is where the information lives.</p>
+<h2 class="sec">When NOT to generate</h2>
+<ul class="tight">
+<li><b>Text, numbers, logos</b> — always built. No exceptions.</li>
+<li><b>Anything under 2s</b> — a built card + zoom is faster and sharper.</li>
+<li><b>Repeat beats</b> — reuse an approved clip with a different crop/zoom (Ken Burns: slow 1.0→1.08 zoom over the still, 3–5s).</li>
+<li><b>Style drift risk</b> — if the bible can&#x27;t describe it in one line, build it instead.</li>
+<li><b>Tight deadline</b> — generation is the slowest, least predictable step. Default to built.</li>
+</ul>
+<h2 class="sec">Ken Burns fallback recipe</h2>
+<div class="code-wrap"><pre class="code">
+# still -&gt; 4s clip, slow push-in, 30fps
+# ffmpeg: zoompan on the still
+ffmpeg -loop 1 -i still.png -vf \
+  &quot;zoompan=z=&#x27;min(1+0.08*in/120,1.08)&#x27;:d=120:s=1080x1920:fps=30&quot; \
+  -t 4 -c:v libx264 -pix_fmt yuv420p kb_still.mp4
+</pre></div>
+<p>120 frames, 1.0→1.08, <code>zoompan</code> is fine here (no text in the still).</p>
+<h2 class="sec">Checklist</h2>
+<ul class="tight">
+<li>☐ Every generated beat has a prompt file referencing the style bible.</li>
+<li>☐ No text/logos/numbers inside generated clips.</li>
+<li>☐ ≤4 generated clips per 3-min video; each ≤5s.</li>
+<li>☐ Cuts land on clause boundaries.</li>
+<li>☐ Refusals logged; never mechanically retried.</li>
+<li>☐ Ken Burns fallback ready for every planned generated beat.</li>
+</ul>
+</div>
+<footer><div class="wrap">
+  <span>Video Style Playbook — reverse-engineered from real viral reels, frame by frame.</span>
+  <span><a href="../../README.md">README</a> · <a href="../../RECIPES.md">Recipes</a></span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

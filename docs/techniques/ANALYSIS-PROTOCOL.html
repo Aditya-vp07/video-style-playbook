@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analysis Protocol — Video Style Playbook</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="../index.html">Video Style <span>Playbook</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Styles</a>
+    <a href="../chooser.html">Style chooser</a>
+    <a href="index.html" class="active">Techniques</a>
+    <a href="../../RECIPES.md">Recipes</a>
+  </div>
+</div></nav>
+<div class="wrap">
+<h1>ANALYSIS-PROTOCOL — forensic DNA capture for new reference videos</h1>
+<p>The repeatable method used to reverse-engineer the first 15 videos (10 IG reels + 5 YouTube). Run this on every new video Aditya sends (10–20 more expected via Google Drive) so the second wave folds into the playbook the same way.</p>
+<h2 class="sec">Phase 1 — Acquire</h2>
+<ul class="tight">
+<li>Collect the URL or file into <code>references/incoming/</code> (see that folder&#x27;s README). Name files <code>&lt;source&gt;_&lt;id&gt;.&lt;ext&gt;</code>.</li>
+<li>If it&#x27;s a link, download with yt-dlp:</li>
+</ul>
+<div class="code-wrap"><pre class="code">
+   python3 -m yt_dlp --no-playlist -f &#x27;bv*[height&lt;=1080]+ba/b[height&lt;=1080]/b&#x27; \
+     --extractor-args &quot;youtube:player_client=android&quot; \
+     -o &#x27;references/incoming/&lt;id&gt;.mp4&#x27; &#x27;&lt;url&gt;&#x27;
+</pre></div>
+<p>Notes: plain web client 429s from this IP — <code>android</code> player_client works. Instagram reels download fine without login. Be polite: <code>--sleep-requests 5 --retries 3</code>.</p>
+<ul class="tight">
+<li>Log it in <code>references/incoming/INDEX.md</code>: source, date fetched, duration, status (<code>pending</code> → <code>analyzed</code>).</li>
+</ul>
+<h2 class="sec">Phase 2 — Frame extraction</h2>
+<div class="code-wrap"><pre class="code">
+id=&lt;id&gt;; mkdir -p /tmp/frames_$id
+# 1-fps contact sheet (first 60s)
+ffmpeg -i references/incoming/$id.mp4 -t 60 -vf &#x27;fps=1,scale=480:-1&#x27; /tmp/frames_$id/c_%04d.jpg
+# scene-change frames (whole video, cap ~40)
+ffmpeg -i references/incoming/$id.mp4 -vf &quot;select=&#x27;gt(scene,0.4)&#x27;,scale=480:-1&quot; -vsync vfr /tmp/frames_$id/s_%04d.jpg
+# dense strip for title windows (first 8s at 4fps)
+ffmpeg -i references/incoming/$id.mp4 -t 8 -vf &#x27;fps=4,scale=480:-1&#x27; /tmp/frames_$id/t_%04d.jpg
+</pre></div>
+<h2 class="sec">Phase 3 — Visual inspection (the actual work)</h2>
+<p>Inspect frames — <b>never captions/descriptions alone</b>. Fill the spec sheet below. Colors are eyeball estimates unless sampled with a color picker; font names are style matches, never claims.</p>
+<h3>Spec sheet template</h3>
+<div class="code-wrap"><pre class="code">
+## &lt;id&gt; — &lt;working title&gt; (&lt;dur&gt;s, &lt;WxH&gt;@&lt;fps&gt;)
+**One-line visual summary:**
+
+**Palette:** bg `#______`, ink `#______`, accent `#______`, …
+**Type:** display (…px, style), supporting (…px), captions (…px)
+**Caption system:** chips/pills/karaoke/plain — position, size, rhythm
+**Motion grammar:** entrances, transitions, easing feel, pacing (beats/sec)
+**Layout:** zones, speaker treatment, safe zones observed
+**Signature device:** the one stealable trick, in one sentence
+**Timestamped beats:** t=… — what changes (for the best ones only)
+**Recipes:** numbered, each with hexes/px/timing
+</pre></div>
+<h2 class="sec">Phase 4 — Fold into the playbook</h2>
+<p>For each spec sheet, decide:</p>
+<table class="cmp"><tr><th>Finding</th><th>Action</th></tr>
+<tr><td>Matches an existing style</td><td>Add its recipes to that style&#x27;s page + <code>RECIPES.md</code>; add example notes</td></tr>
+<tr><td>New visual language</td><td>New entry in <code>STYLES.md</code> + new <code>examples/&lt;slug&gt;/</code> (5 scenario images) + new <code>docs/styles/&lt;slug&gt;.html</code> (regen via <code>docs/_gen.py</code>)</td></tr>
+<tr><td>New engineering technique</td><td>New file in <code>techniques/</code> + Techniques section on the site</td></tr>
+<tr><td>One-off trick</td><td>Add to <code>RECIPES.md</code> only</td></tr>
+</table>
+<p>Then:</p>
+<ul class="tight">
+<li>Update <code>references/incoming/INDEX.md</code> → <code>analyzed</code>.</li>
+<li>Regenerate the docs site (<code>python3 docs/_gen.py</code> + technique pages).</li>
+<li>Commit: <code>git commit -m &quot;analysis wave 2: &lt;ids&gt; → &lt;styles/recipes added&gt;&quot;</code>.</li>
+</ul>
+<h2 class="sec">Quality bar</h2>
+<ul class="tight">
+<li>Every hex in a recipe was seen on a frame, not guessed from a description.</li>
+<li>Every timing claim has a timestamp.</li>
+<li>&quot;Best video&quot; candidates get the full timestamped beat map treatment.</li>
+<li>If a download fails (throttle/login-wall), say so in the spec sheet and analyze what&#x27;s available (storyboard sprites, thumbnails) — never present partial analysis as complete.</li>
+</ul>
+</div>
+<footer><div class="wrap">
+  <span>Video Style Playbook — reverse-engineered from real viral reels, frame by frame.</span>
+  <span><a href="../../README.md">README</a> · <a href="../../RECIPES.md">Recipes</a></span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

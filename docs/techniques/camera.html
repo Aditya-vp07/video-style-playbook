@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camera — Video Style Playbook</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <a class="brand" href="../index.html">Video Style <span>Playbook</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Styles</a>
+    <a href="../chooser.html">Style chooser</a>
+    <a href="index.html" class="active">Techniques</a>
+    <a href="../../RECIPES.md">Recipes</a>
+  </div>
+</div></nav>
+<div class="wrap">
+<h1>Camera — buttery GSAP-grade motion for the virtual camera</h1>
+<p>This is the motion layer under everything: zooms, pans, and transitions driven by a virtual camera, with easing curves that feel like GSAP (<code>expo.out</code> / <code>expo.inOut</code>). All params assume 1080×1920 @ 30fps unless noted. The reference implementation targets a numpy per-frame envelope fed into ffmpeg (<code>zoompan</code> or <code>scale</code>+<code>crop</code> with <code>eval=frame</code>).</p>
+<h2 class="sec">The easing math (copy this)</h2>
+<div class="code-wrap"><pre class="code">
+import math
+
+def ease_out_expo(t):      # GSAP expo.out
+    return 1.0 if t &gt;= 1 else 1 - 2 ** (-10 * t)
+
+def ease_in_out_expo(t):   # GSAP expo.inOut
+    if t &lt;= 0: return 0.0
+    if t &gt;= 1: return 1.0
+    return (2 ** (20 * t - 10) / 2) if t &lt; 0.5 else (2 - 2 ** (-20 * t + 10)) / 2
+
+def ease_out_cubic(t):     # snappier, cheaper feel for small moves
+    return 1 - (1 - t) ** 3
+
+def ease_in_out_cubic(t):  # pans, tracking moves
+    return 4*t**3 if t &lt; 0.5 else 1 - (-2*t + 2)**3 / 2
+</pre></div>
+<p>Rules of thumb (from the forensic pass):</p>
+<ul class="tight">
+<li><b>Zooms:</b> <code>ease_out_expo</code>, 0.5–1.2s. Expo feels &quot;expensive&quot;; cubic feels &quot;snappy&quot;.</li>
+<li><b>Pans / tracking:</b> <code>ease_in_out_cubic</code>, 1.0–2.0s. Never expo a pan — it whips.</li>
+<li><b>Pops (chips, labels):</b> <code>ease_out_cubic</code>, 0.15–0.25s, scale 0.9→1.0.</li>
+<li>Never linear. Never the same duration twice in a row — alternate 0.6s / 1.1s.</li>
+</ul>
+<h2 class="sec">Zoom-on-word-timestamp (the best-video move)</h2>
+<p>The signature device: the camera zoom fires **on the same word timestamps** as the title/caption. Implementation: the cue sheet already has word timestamps; attach zoom events to marked words.</p>
+<div class="code-wrap"><pre class="code">
+def zoom_envelope(n_frames, fps, events, base=1.0):
+    &quot;&quot;&quot;events: list of (t_sec, target_scale, dur_sec). Returns per-frame scale.&quot;&quot;&quot;
+    import numpy as np
+    s = np.full(n_frames, base)
+    for t, target, dur in events:
+        f0 = int(t * fps); f1 = min(n_frames, f0 + int(dur * fps))
+        if f1 &lt;= f0: continue
+        start = s[f0 - 1] if f0 &gt; 0 else base
+        for f in range(f0, f1):
+            u = (f - f0) / max(1, (f1 - f0))
+            s[f] = start + (target - start) * ease_out_expo(u)
+        s[f1:] = s[f1 - 1]  # hold
+    return s
+</pre></div>
+<p>Feed it into ffmpeg. Two routes:</p>
+<p><b>Route A — zoompan (simple, slight jitter on text; fine for plates):</b></p>
+<div class="code-wrap"><pre class="code">
+-vf &quot;zoompan=z=&#x27;1+0.35*in/90&#x27;:d=1:s=1080x1920:fps=30&quot;
+</pre></div>
+<p><b>Route B — scale+crop with eval=frame (crisp, preferred for type):</b> Render frames large (e.g. 1620×2880), then:</p>
+<div class="code-wrap"><pre class="code">
+-vf &quot;scale=1620:2880,crop=1080:1920:&#x27;(in_w-out_w)/2+(in_w-out_w)/2*0.06*sin(2*PI*t/8)&#x27;:&#x27;(in_h-out_h)/2&#x27;,scale=1080:1920&quot;
+</pre></div>
+<p>For scripted zooms, generate the envelope in Python and pass per-frame <code>x</code>,<code>y</code>,<code>w</code>,<code>h</code> via a <code>sendcmd</code> file or bake frames with PIL (see below).</p>
+<p><b>Baking with PIL (deterministic, recommended):</b></p>
+<div class="code-wrap"><pre class="code">
+from PIL import Image
+def apply_zoom(base: Image.Image, scale: float, cx=0.5, cy=0.5, out=(1080,1920)):
+    W, H = base.size
+    w, h = int(W / scale), int(H / scale)
+    x = int((W - w) * cx); y = int((H - h) * cy)
+    return base.crop((x, y, x + w, y + h)).resize(out, Image.LANCZOS)
+</pre></div>
+<p>Render the scene at 1.5×, then <code>apply_zoom</code> per frame with the envelope. Zoom range: keep <code>1.0 → 1.15</code> for push-ins, <code>1.15 → 1.0</code> for pullbacks. Beyond 1.25× the upscale softens — stay under it.</p>
+<h2 class="sec">Virtual camera rig recipe</h2>
+<div class="code-wrap"><pre class="code">
+class VCam:
+    def __init__(self, fps=30):
+        self.fps, self.moves = fps, []  # (t0, dur, kind, params)
+    def zoom(self, t0, dur, frm, to):
+        self.moves.append((t0, dur, &#x27;zoom&#x27;, (frm, to)))
+    def pan(self, t0, dur, frm_xy, to_xy):
+        self.moves.append((t0, dur, &#x27;pan&#x27;, (frm_xy, to_xy)))
+    def envelope(self, total):
+        import numpy as np
+        n = int(total * self.fps)
+        zoom = np.ones(n); cx = np.full(n, 0.5); cy = np.full(n, 0.5)
+        for t0, dur, kind, p in self.moves:
+            f0, f1 = int(t0*self.fps), min(n, int((t0+dur)*self.fps))
+            ease = ease_out_expo if kind==&#x27;zoom&#x27; else ease_in_out_cubic
+            for f in range(f0, f1):
+                u = ease((f-f0)/max(1,f1-f0))
+                if kind==&#x27;zoom&#x27;:
+                    z0 = zoom[f0-1] if f0&gt;0 else 1.0
+                    zoom[f] = z0 + (p[1]-z0)*u if f==f0 else zoom[f]  # chain
+                else:
+                    cx[f] = p[0][0]+(p[1][0]-p[0][0])*u
+                    cy[f] = p[0][1]+(p[1][1]-p[0][1])*u
+            if kind==&#x27;zoom&#x27;: zoom[f1:] = zoom[f1-1]
+        return zoom, cx, cy
+</pre></div>
+<p>Notes:</p>
+<ul class="tight">
+<li>Chain moves: each zoom starts from the *current* zoom, not 1.0.</li>
+<li>One camera, one envelope per scene. A new scene = new VCam.</li>
+<li>Typical scene: pullback 1.12→1.0 over 1.2s on the title beat, then two push-ins (1.0→1.08) on keyword beats, 0.7s each.</li>
+</ul>
+<h2 class="sec">Zoom-through transitions (beat changes)</h2>
+<p>Instead of a hard cut: zoom *through* the cut.</p>
+<ul class="tight">
+<li>Outgoing scene: zoom 1.0→1.35 over 0.35s (<code>ease_in_out_expo</code>).</li>
+<li>Hard cut at peak.</li>
+<li>Incoming scene: starts at 0.85, settles 0.85→1.0 over 0.5s (<code>ease_out_expo</code>).</li>
+</ul>
+<p>The 0.35s out + cut + 0.5s in reads as &quot;diving into&quot; the next idea. Use sparingly — max 2–3 per minute, reserved for topic changes. Everyday beat changes stay hard cuts (per the forensic pass: dissolves almost never appear in the source videos).</p>
+<h2 class="sec">Tracking-style moves</h2>
+<p>Slow lateral drift behind a static graphic (e.g. diagram act panning):</p>
+<ul class="tight">
+<li><code>pan</code> 0.5→0.35 in x over 6–10s, <code>ease_in_out_cubic</code>.</li>
+<li>Amplitude ≤ 8% of frame width — it&#x27;s felt, not seen.</li>
+<li>Pair with a 1.0→1.06 slow zoom so edges never show.</li>
+</ul>
+<h2 class="sec">Checklist before render</h2>
+<ul class="tight">
+<li>☐ No linear ramps anywhere.</li>
+<li>☐ Zoom durations alternate (0.6 / 1.1 pattern).</li>
+<li>☐ Pans use cubic, never expo.</li>
+<li>☐ Max zoom 1.25× (upscale budget).</li>
+<li>☐ Zoom events land on cue-sheet word timestamps, not scene starts.</li>
+<li>☐ Zoom-throughs ≤ 3 per minute.</li>
+</ul>
+</div>
+<footer><div class="wrap">
+  <span>Video Style Playbook — reverse-engineered from real viral reels, frame by frame.</span>
+  <span><a href="../../README.md">README</a> · <a href="../../RECIPES.md">Recipes</a></span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>
